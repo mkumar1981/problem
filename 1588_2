@@ -1,0 +1,21 @@
+class Solution {
+public:
+    int sumOddLengthSubarrays(vector<int>& arr) {
+        vector<int> psum(arr.size());
+        psum[0] = arr[0];
+        for(int i=1; i<arr.size(); ++i)
+        {
+            psum[i] = arr[i] + psum[i-1];
+        }
+        int sum = 0;
+        
+        for(int len=1; len<=arr.size(); len+=2)
+        {
+            for(int i=len; i<=arr.size(); ++i)
+            {
+                sum += (psum[i-1] - (i-len-1>=0?psum[i-len-1]:0));
+            }
+        }
+        return sum;
+    }
+};
