@@ -1,0 +1,41 @@
+class SparseVector {
+private:
+    vector<pair<int, int>> pvec;
+public:
+    
+    SparseVector(vector<int> &nums) {
+        for(int i=0; i<nums.size(); ++i)
+        {
+            if (nums[i])
+                pvec.push_back({i, nums[i]});
+        }
+    }
+    
+    // Return the dotProduct of two sparse vectors
+    int dotProduct(SparseVector& vec) {
+        size_t size1 = this->pvec.size();
+        size_t size2 = vec.pvec.size();
+        size_t i = 0 , j = 0;
+        int ans = 0;
+        while((i<size1) && (j<size2))
+        {
+            int index1 = this->pvec[i].first;
+            int index2 = vec.pvec[j].first;
+            if (index1 == index2)
+            {
+                ans += (this->pvec[i].second * vec.pvec[j].second);
+                ++i;
+                ++j;
+            }
+            else if (index1<index2)
+            {
+                ++i;
+            }
+            else
+            {
+                ++j;
+            }
+        }
+        return ans;
+    }
+};
