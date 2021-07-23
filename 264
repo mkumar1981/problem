@@ -1,0 +1,28 @@
+class Solution {
+public:
+    int nthUglyNumber(int n) {
+        int uglyNumber[n];
+        uglyNumber[0] = 1;
+        int index2 = 0, index3 = 0, index5 = 0;
+        int nextIndex = 1;
+        while (nextIndex<n)
+        {
+            int min = std::min({uglyNumber[index2]*2, uglyNumber[index3]*3, uglyNumber[index5]*5});
+            uglyNumber[nextIndex++] = min;
+            while (index2<nextIndex && (uglyNumber[index2]*2)<=min)
+            {
+                ++index2;
+            }
+            while (index3<nextIndex && (uglyNumber[index3]*3)<=min)
+            {
+                ++index3;
+            }
+            while (index5<nextIndex && (uglyNumber[index5]*5)<=min)
+            {
+                ++index5;
+            }
+        }
+        return uglyNumber[n-1];
+        
+    }
+};
