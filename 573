@@ -1,0 +1,19 @@
+class Solution {
+private:
+    int dist(vector<int>& d1, vector<int>& d2)
+    {
+        int d = abs(d2[0]-d1[0]) + abs(d2[1]-d1[1]);
+        return d;
+    }
+public:
+    int minDistance(int height, int width, vector<int>& tree, vector<int>& squirrel, vector<vector<int>>& nuts) {
+        int total_dist = 0;
+        int d = numeric_limits<int>::min();
+        for(int i=0; i<nuts.size(); ++i)
+        {
+            total_dist += (dist(tree, nuts[i])*2);
+            d = max(d, dist(tree, nuts[i]) - dist(squirrel, nuts[i]));
+        }
+        return total_dist-d;
+    }
+};
