@@ -1,0 +1,43 @@
+class Solution {
+private:
+    void reverse(vector<int>& nums, int l, int r)
+    {
+        while(l<r)
+        {
+            int temp = nums[l];
+            nums[l] = nums[r];
+            nums[r] = temp;
+            ++l;
+            --r;
+        }
+    }
+    
+    void swap(int* a, int* b)
+    {
+        int temp = *a;
+        *a = *b;
+        *b = temp;
+    }
+public:
+    void nextPermutation(vector<int>& nums) {
+        int i = 0;
+        for(i=nums.size()-1; i>0; --i)
+        {
+            if (nums[i-1]<nums[i])
+                break;
+        }
+        if (i==0)
+            reverse(nums, 0, nums.size()-1);
+        else
+        {
+            int j = 0;
+            for(j=nums.size()-1; j>0; --j)
+            {
+                if (nums[j]>nums[i-1])
+                    break;
+            }
+            swap(&nums[i-1], &nums[j]);
+            reverse(nums, i, nums.size()-1);
+        }
+    }
+};
