@@ -1,0 +1,17 @@
+class Solution {
+public:
+    int numRabbits(vector<int>& answers) {
+        unordered_map<int, int> frequencyMap;
+        for(auto& ans: answers)
+            ++frequencyMap[ans];
+        int total = 0;
+        for(auto& iter: frequencyMap)
+        {
+            double num = ((double)iter.second)/((double)(iter.first+1));
+            int group = ceil(num);
+            group = (group==0)?1:group;
+            total += group*(iter.first+1);
+        }
+        return total;
+    }
+};
