@@ -1,0 +1,23 @@
+class Solution {
+public:
+    string getPermutation(int n, int k) {
+        string result;
+        vector<int> factorial(n, 1);
+        vector<int> nums;
+        nums.push_back(1);
+        for(int i=1; i<n; ++i)
+        {
+            nums.push_back(i+1);
+            factorial[i] = factorial[i-1]*i;
+        }
+        --k;
+        for(int i=n-1; i>=0; --i)
+        {
+            int idx = k/factorial[i];
+            k -= (idx*factorial[i]);
+            result += (nums[idx] + '0');
+            remove(nums.begin(), nums.end(), nums[idx]);
+        }
+        return result;
+    }
+};
