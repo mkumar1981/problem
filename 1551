@@ -1,0 +1,12 @@
+class Solution {
+public:
+    int minOperations(int n) {
+        int total = 0;
+        while (n>0)
+        {
+            total += (n-1);
+            n-=2;
+        }
+        return total;
+    }
+};
