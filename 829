@@ -1,0 +1,20 @@
+class Solution {
+public:
+    /*
+     * N = (a+1) + (a+2) ... (a+K);
+     * N = a*K + (K.(K+1))/2
+     * a = (N-(K*(K+1))/2)/K;
+     */
+    int consecutiveNumbersSum(int n) {
+        int count  = 0;
+        for(int K=1; K*(K+1)<=2*n; ++K)
+        {
+           int res = (n-(K*(K+1))/2)%K;
+           if (res == 0)
+           {
+               ++count;
+           }
+        }
+        return count;
+    }
+};
