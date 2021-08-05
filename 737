@@ -1,0 +1,83 @@
+class Solution {
+private:
+    class UnionFind
+    {
+    private:
+        unordered_map<string, int> stringToIndexMap;
+        vector<int> parent;
+        vector<int> sizes;
+    public:
+        UnionFind(vector<vector<string>>& strs)
+        {
+            int n = strs.size();
+            for(int i=0; i<n; ++i)
+            {
+                stringToIndexMap[strs[i][0]] = 2*i;
+                stringToIndexMap[strs[i][1]] = 2*i+1;
+            }
+            parent.resize(2*n);
+            sizes.resize(2*n);
+            for(int i=0; i<2*n; ++i)
+            {
+                parent[i] = i;
+                sizes[i] = 1;
+            }
+        }
+        int find(int x)
+        {
+            if (parent[x] ==x)
+                return x;
+            return parent[x] = find(parent[x]);
+        }
+        bool isSimilar(string& s1, string& s2)
+        {
+            auto iter1 = stringToIndexMap.find(s1);
+            auto iter2 = stringToIndexMap.find(s2);
+            if (iter1==stringToIndexMap.end() || iter2==stringToIndexMap.end())
+                return false;
+            return find(iter1->second) == find(iter2->second);
+        }
+        void Union(string& s1, string& s2)
+        {
+            int index1 = stringToIndexMap[s1];
+            int index2 = stringToIndexMap[s2];
+            int p1 = find(index1);
+            int p2 = find(index2);
+            if (p1!=p2)
+            {
+                if (sizes[p1]<sizes[p2])
+                {
+                    sizes[p2] += sizes[p1];
+                    parent[p1] = p2;
+                }
+                else
+                {
+                    parent[p2] = p1;
+                    sizes[p1] += sizes[p2];
+                }
+            }
+        }
+    };
+public:
+    bool areSentencesSimilarTwo(vector<string>& sentence1, vector<string>& sentence2, vector<vector<string>>& similarPairs) {
+        if (sentence1.size() != sentence2.size())
+            return false;
+        UnionFind uf(similarPairs);
+        for (int i=0; i<similarPairs.size(); ++i)
+        {
+            uf.Union(similarPairs[i][0], similarPairs[i][1]);
+        }
+        int size = sentence1.size();
+        for(int i=0; i<size; ++i)
+        {
+            if (sentence1[i] != sentence2[i])
+            {
+                if (!uf.isSimilar(sentence1[i], sentence2[i]))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+};
