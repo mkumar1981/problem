@@ -1,0 +1,80 @@
+class Solution {
+private:
+    class UnionFind
+    {
+    private:
+        vector<int> parent;
+        vector<int> sizes;
+        int max_size;
+        unordered_map<int, int> pmap;
+        int findCore(int x)
+        {
+            int p = parent[x];
+            if (p == x)
+                return p;
+            return parent[x] = findCore(parent[x]);
+        }
+        void UnionCore(int x, int y)
+        {
+            int p1 = findCore(x);
+            int p2 = findCore(y);
+            if (p1!=p2)
+            {
+                if (sizes[p1]<sizes[p2])
+                {
+                    parent[p1] = p2;
+                    sizes[p2] += sizes[p1];
+                }
+                else
+                {
+                    parent[p2] = p1;
+                    sizes[p1] += sizes[p2];
+                }
+            }
+            max_size = max({max_size, sizes[p1], sizes[p2]});
+        }
+    public:
+        UnionFind(vector<int>& nums)
+        {
+            int n = nums.size();
+            max_size = (n>0?1:0);
+            parent.resize(n);
+            sizes.resize(n);
+            for(int i=0; i<n; ++i)
+            {
+                pmap[nums[i]] = i;
+                parent[i] = i;
+                sizes[i] = 1;
+            }
+        }
+        int find(int x)
+        {
+            auto iter = pmap.find(x);
+            if (iter != pmap.end())
+                return findCore(iter->second);
+            else
+                return -1;
+        }
+        void Union(int x, int y)
+        {
+            int idx1 = pmap[x]; 
+            int idx2 = pmap[y];
+            UnionCore(idx1, idx2);
+        }
+        int getSize()
+        {
+            return max_size;
+        }
+    };
+public:
+    int longestConsecutive(vector<int>& nums) {
+        UnionFind uf(nums);
+        for(auto num: nums)
+        {
+            int x = uf.find(num+1);
+            if (x!=-1)
+                uf.Union(num, num+1);
+        }
+        return uf.getSize();
+    }
+};
