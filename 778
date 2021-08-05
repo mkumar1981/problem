@@ -1,0 +1,88 @@
+class Solution {
+private:
+    unordered_map<int, pair<int, int>> cellMap;
+    class UnionFind
+    {
+    private:
+        vector<int> parent;
+        vector<int> sizes;
+    public:
+        UnionFind(int n)
+        {
+            parent.resize(n);
+            sizes.resize(n);
+            for(int i=0; i<n; ++i)
+            {
+                parent[i] = i;
+                sizes[i] = i;
+            }
+        }
+        int find(int n)
+        {
+            int x = parent[n];
+            if (x==n)
+                return x;
+            return parent[n] = find(parent[n]);
+        }
+        void Union(int x, int y)
+        {
+            int p1 = find(x);
+            int p2 = find(y);
+            if (p1!=p2)
+            {
+                if (sizes[p1]<sizes[p2])
+                {
+                    parent[p1] = p2;
+                    sizes[p2] += sizes[p1];
+                }
+                else
+                {
+                    parent[p2] = p1;
+                    sizes[p1] += sizes[p2];
+                }
+            }
+        }
+    };
+public:
+    int swimInWater(vector<vector<int>>& grid) {
+        int n = grid.size();
+        for(int i=0; i<n; ++i)
+        {
+            for(int j=0; j<n; ++j)
+            {
+                cellMap[grid[i][j]] = make_pair(i, j);
+            }
+        }
+        int total = n*n;
+        UnionFind uf(total);
+        int days = 1;
+        int dir[4][2] = {{-1,0}, {0,1}, {1, 0}, {0, -1}};
+        while (days<total)
+        {
+            auto cellInfo = cellMap[days];
+            int r = cellInfo.first;
+            int c = cellInfo.second;
+            int x = uf.find(grid[r][c]);
+            for(int i=0; i<4; ++i)
+            {
+                int r1 = r+dir[i][0];
+                int c1 = c+dir[i][1];
+                if (r1>=0 && c1>=0 && r1<n && c1<n)
+                {
+                    if (grid[r1][c1] <= days)
+                    {
+                        int y = uf.find(grid[r1][c1]);
+                        if (x!=y)
+                            uf.Union(x, y);
+                    }
+                }
+            }
+                      
+            /* check if first and last cell in the same component */
+            if (uf.find(grid[0][0]) == uf.find(grid[n-1][n-1]))
+                return days;
+            ++days;
+        }
+        return -1;
+    }
+};
