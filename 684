@@ -1,0 +1,67 @@
+class Solution {
+private:
+    class UnionFind
+    {
+    private:
+        vector<int> parent;
+        vector<int> sizes;
+    public:
+        UnionFind(int n)
+        {
+            parent.resize(n);
+            sizes.resize(n);
+            for(int i=0; i<n; ++i)
+            {
+                parent[i] = i;
+                sizes[i] = 1;
+            }
+        }
+        int find(int x)
+        {
+            if (parent[x]==x)
+                return x;
+            return parent[x] = find(parent[x]);
+        }
+        void Union(int x, int y)
+        {
+            int p1 = find(x);
+            int p2 = find(y);
+            if (p1!=p2)
+            {
+                if (sizes[p1]<sizes[p2])
+                {
+                    sizes[p2] += sizes[p1];
+                    parent[p1] = p2;
+                }
+                else
+                {
+                    sizes[p1] += sizes[p2];
+                    parent[p2] = p1;
+                }
+            }
+        }
+        bool isConnected(int x, int y)
+        {
+            return find(x)==find(y);
+        }
+    };
+public:
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        int n = edges.size();
+        UnionFind uf(n+1);
+        int x = -1, y = -1;
+        for(int i=0; i<n; ++i)
+        {
+            if (!uf.isConnected(edges[i][0], edges[i][1]))
+            {
+                uf.Union(edges[i][0], edges[i][1]);
+            }
+            else
+            {
+                x = edges[i][0];
+                y = edges[i][1];
+            }
+        }
+        return {x, y};
+    }
+};
