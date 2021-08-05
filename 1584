@@ -1,0 +1,90 @@
+class Solution {
+private:
+    struct EdgeWeight
+    {
+        int u;
+        int v;
+        int cost;
+        EdgeWeight(int u1, int v1, int c):u(u1), v(v1), cost(c){}
+    };
+    struct cmp
+    {
+        bool operator()(const EdgeWeight& w1, const EdgeWeight& w2)
+        {
+            return w1.cost<w2.cost;
+        }
+    };
+    
+    class UnionFind
+    {
+    private:
+        vector<int> parent;
+        vector<int> sizes;
+    public:
+        UnionFind(int n)
+        {
+            parent.resize(n);
+            sizes.resize(n);
+            for(int i=0; i<n; ++i)
+            {
+                parent[i] = i;
+                sizes[i] = 1;
+            }
+        }
+        int find(int x)
+        {
+            if (parent[x] == x)
+                return x;
+            return parent[x] = find(parent[x]);
+        }
+        void Union(int x, int y)
+        {
+            int p1 = find(x);
+            int p2 = find(y);
+            if (p1!=p2)
+            {
+                if (sizes[p1]<sizes[p2])
+                {
+                    parent[p1] = p2;
+                    sizes[p2] += sizes[p1];
+                }
+                else
+                {
+                    parent[p2] = p1;
+                    sizes[p1] += sizes[p2];
+                }
+            }
+        }
+        bool isConnected(int x, int y)
+        {
+            return find(x) == find(y);
+        }
+    };
+public:
+    int minCostConnectPoints(vector<vector<int>>& points) {
+        vector<EdgeWeight> edgeVec;
+        int n = points.size();
+        for(int i=0; i<n; ++i)
+        {
+            for(int j=i+1; j<n; ++j)
+            {
+                int w = abs(points[j][0]-points[i][0]) + abs(points[j][1]-points[i][1]);
+                edgeVec.emplace_back(i, j, w);
+            }
+        }
+        int minCost = 0;
+        sort(edgeVec.begin(), edgeVec.end(), cmp());
+        UnionFind uf(n);
+        int size = edgeVec.size();
+        for(int i=0; i<size; ++i)
+        {
+            auto edge = edgeVec[i];
+            if (!uf.isConnected(edge.u, edge.v))
+            {
+                minCost += edge.cost;
+                uf.Union(edge.u, edge.v);
+            }
+        }
+        return minCost;
+    }
+};
