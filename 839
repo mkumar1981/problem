@@ -1,0 +1,78 @@
+class Solution {
+private:
+    class UnionFind
+    {
+    private:
+        vector<int> parent;
+        vector<int> sizes;
+        int groups;
+    public:
+        UnionFind(int n)
+        {
+            parent.resize(n);
+            sizes.resize(n);
+            groups = n;
+            for(int i=0; i<n; ++i)
+            {
+                parent[i] = i;
+                sizes[i] = 1;
+            }
+        }
+        int find(int x)
+        {
+            int p = parent[x];
+            if (p==x)
+                return p;
+            return parent[x] = find(p);
+        }
+        void Union(int x, int y)
+        {
+            int p1 = find(x);
+            int p2 = find(y);
+            if (p1 != p2)
+            {
+                --groups;
+                if (sizes[p1]<sizes[p2])
+                {
+                    parent[p1] = p2;
+                    sizes[p2] += sizes[p1];
+                }
+                else
+                {
+                    parent[p2] = p1;
+                    sizes[p1] += sizes[p2];
+                }
+            }
+        }
+        int getGroupCount()
+        {
+            return groups;
+        }
+    };
+    
+    bool isSimilar(string& s1, string& s2)
+    {
+        int diff = 0;
+        int len = s1.length();
+        for(int i=0; i<len; ++i)
+        {
+            if (s1[i]!=s2[i])
+                ++diff;
+        }
+        return diff<=2?true:false;
+    }
+public:
+    int numSimilarGroups(vector<string>& strs) {
+        UnionFind uf(strs.size());
+        int n = strs.size();
+        for(int i=0; i<n; ++i)
+        {
+            for(int j=i+1; j<n; ++j)
+            {
+                if (isSimilar(strs[i], strs[j]))
+                    uf.Union(i, j);
+            }
+        }
+        return uf.getGroupCount();
+    }
+};
