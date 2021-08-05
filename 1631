@@ -1,0 +1,97 @@
+class Solution {
+private:
+    struct Edge
+    {
+        int x, y;
+        int difference;
+        Edge(int x, int y, int difference)
+        {
+            this->x = x;
+            this->y = y;
+            this->difference = difference;
+        }
+    };
+    class UnionFind
+    {
+    private:
+        vector<int> parents;
+        vector<int> sizes;
+    public:
+        vector<Edge> edgeList;
+        UnionFind(vector<vector<int>>& heights)
+        {
+            int nrows = heights.size();
+            int ncols = heights[0].size();
+            parents.assign(nrows*ncols, 0);
+            sizes.assign(nrows*ncols, 1);
+            for(int row=0; row<nrows; ++row)
+            {
+                for(int col=0; col<ncols; ++col)
+                {
+                    if (row>0)
+                    {
+                        edgeList.emplace_back((row*ncols+col), (((row-1)*ncols)+col),
+                                              abs(heights[row][col]-heights[row-1][col]));
+                    }
+                    if (col>0)
+                    {
+                        edgeList.emplace_back((row*ncols+col), (row*ncols+(col-1)),
+                                             abs(heights[row][col]-heights[row][col-1]));
+                    }
+                    parents[row*ncols+col] = (row*ncols+col);
+
+                }
+            }
+        }
+        int find(int x)
+        {
+            if (parents[x] == x)
+                return x;
+            return parents[x] = find(parents[x]);
+        }
+        void Union(int x, int y)
+        {
+            int p1 = find(x);
+            int p2 = find(y);
+            if (p1!=p2)
+            {
+                if (sizes[p1]<sizes[p2])
+                {
+                    parents[p1] = p2;
+                    sizes[p2] += sizes[p1];
+                }
+                else
+                {
+                    parents[p2] = p1;
+                    sizes[p1] += sizes[p2];
+                }
+            }
+        }
+    };
+    
+    struct cmp
+    {
+        bool operator()(const Edge& e1, const Edge& e2)
+        {
+            return e1.difference<e2.difference;
+        }
+    };
+public:
+    int minimumEffortPath(vector<vector<int>>& heights) {
+        int nrows = heights.size();
+        int ncols = heights[0].size();
+        if ((nrows==1) && (ncols==1))
+            return 0;
+        UnionFind uf(heights);
+        auto& edges = uf.edgeList;
+        sort(edges.begin(), edges.end(), cmp());
+        for(int i=0; i<edges.size(); ++i)
+        {
+            Edge& e = edges[i];
+            uf.Union(e.x, e.y);
+            if (uf.find(0) == uf.find(nrows*ncols-1))
+                return e.difference;
+        }
+        return -1;
+    }
+};
