@@ -1,0 +1,29 @@
+class Solution {
+public:
+    int rand10() {
+        while (true)
+        {
+            int a = rand7();
+            int b = rand7();
+            int index = 7*(a-1)+b;
+            if (index<=40)
+                return 1+(index-1)%10;
+            else
+            {
+                a = index-40;
+                b = rand7();
+                index = 7*(a-1)+b;
+                if (index<=60)
+                    return 1+(index-1)%10;
+                else
+                {
+                    a = index=60;
+                    b = rand7();
+                    index = 7*(a-1)+b;
+                    if (index<=20)
+                        return 1+(index-1)%10;
+                }
+            }
+        }
+    }
+};
