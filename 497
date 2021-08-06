@@ -1,0 +1,33 @@
+class Solution {
+private:
+    vector<vector<int>> prects;
+    vector<int> psum;
+    int area(vector<int>& rect)
+    {
+        return (abs(rect[2]-rect[0])+1)*(abs(rect[3]-rect[1])+1);
+    }
+public:
+    Solution(vector<vector<int>>& rects) {
+        prects = std::move(rects);
+        for(auto& rect: prects)
+        {
+            psum.push_back(area(rect)+(psum.empty()?0:psum.back()));
+        }
+    }
+    
+    vector<int> pick() {
+        double random = ((float)rand())/RAND_MAX;
+        int val = random*psum.back();
+        int index = upper_bound(psum.begin(), psum.end(), val)-psum.begin();
+        vector<int>& rect = prects[index];
+        int x = (rand()%(rect[2]-rect[0]+1))+rect[0];
+        int y = (rand()%(rect[3]-rect[1]+1))+rect[1];
+        return {x, y};
+    }
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(rects);
+ * vector<int> param_1 = obj->pick();
+ */
