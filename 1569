@@ -1,0 +1,36 @@
+class Solution {
+private:
+    const int mod = 1000000007;
+    int dp[1001][1001];
+    long helper(vector<int>& nums)
+    {
+        if (nums.size() <= 1)
+            return 1;
+        int root = nums[0];
+        vector<int> left, right;
+        for(int i=1; i<nums.size(); ++i)
+        {
+            if (nums[i]<root)
+                left.push_back(nums[i]);
+            else
+                right.push_back(nums[i]);
+        }
+        long l = helper(left);
+        long r = helper(right);
+        int n = left.size()+right.size();
+        return ((l*r)%mod*dp[n][left.size()])%mod;
+    }
+public:
+    int numOfWays(vector<int>& nums) {
+        int n = nums.size();
+        for(int i=0; i<n; ++i)
+        {
+            dp[i][0] = 1;
+            for(int j=1; j<=i; ++j)
+            {
+                dp[i][j] = (dp[i-1][j] + dp[i-1][j-1])%mod;
+            }
+        }
+        return helper(nums)-1;
+    }
+};
