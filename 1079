@@ -1,0 +1,48 @@
+class Solution {
+private:
+    int factorial(int n)
+    {
+        int num = 1;
+        for(int i=2; i<=n; ++i)
+            num *= i;
+        return num;
+    }
+public:
+    int numTilePossibilities(string tiles) {
+        unordered_map<char, int> freqMap;
+        for(auto ch: tiles)
+            ++freqMap[ch];
+        vector<int> nums;
+        for(auto& iter: freqMap)
+            nums.push_back(iter.second);
+        vector<vector<int>> groups;
+        int n = nums.size();
+        groups.push_back(vector<int>());
+        for(int i=0; i<n; ++i)
+        {
+            int size = groups.size();
+            for(int j=0; j<size; ++j)
+            {
+                for (int k=1; k<=nums[i]; ++k)
+                {
+                    vector<int> res(groups[j]);
+                    res.push_back(k);
+                    groups.push_back(res);
+                }
+            }
+        }
+        int ans = 0;
+        for(int i=0; i<groups.size(); ++i)
+        {
+            int count = 0, deno = 1;
+            for(int j=0; j<groups[i].size(); ++j)
+            {
+                count += groups[i][j];
+                deno *= factorial(groups[i][j]);
+            }
+            if (count)
+                ans += factorial(count)/deno;
+        }
+        return ans;
+    }
+};
