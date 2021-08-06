@@ -1,0 +1,85 @@
+class Solution {
+private:
+    class UnionFind
+    {
+    private:
+        vector<int> parent;
+        vector<int> sizes;
+    public:
+        UnionFind(vector<vector<int>>& grid)
+        {
+            int rows = grid.size();
+            int cols = grid[0].size();
+            parent.assign(rows*cols, 0);
+            sizes.assign(rows*cols, 1);
+            for(int row=0; row<rows; ++row)
+            {
+                for(int col=0; col<cols; ++col)
+                {
+                    parent[row*cols+col] = row*cols+col;
+                }
+            }
+        }
+        int find(int x)
+        {
+            if (parent[x] == x)
+                return x;
+            return parent[x] = find(parent[x]);
+        }
+        
+        void Union(int x, int y)
+        {
+            int p1 = find(x);
+            int p2 = find(y);
+            if (p1!=p2)
+            {
+                if (sizes[p1]<sizes[p2])
+                {
+                    sizes[p2] += sizes[p1];
+                    parent[p1] = p2;
+                }
+                else
+                {
+                    sizes[p1] += sizes[p2];
+                    parent[p2] = p1;
+                }
+            }
+        }
+    }; 
+public:
+    int maximumMinimumPath(vector<vector<int>>& grid) {
+        UnionFind uf(grid);
+        vector<vector<int>> ids;
+        for (int i=0; i<grid.size(); ++i)
+        {
+            for(int j=0; j<grid[0].size(); ++j)
+            {
+                ids.push_back({i, j});
+            }
+        }
+        auto cmp = [&grid](const vector<int>& v1, const vector<int>& v2) 
+                                { return grid[v1[0]][v1[1]]>grid[v2[0]][v2[1]]; };
+        sort(ids.begin(), ids.end(), cmp);
+        int n = ids.size();
+        int dir[4][2] = {{-1,0}, {0,1}, {1,0}, {0, -1}};
+        int rows = grid.size();
+        int cols = grid[0].size();
+        vector<vector<bool>> visited(n, vector<bool>(cols, false));
+        for(int i=0; i<n; ++i)
+        {
+            int r = ids[i][0];
+            int c = ids[i][1];
+            visited[r][c] = true;
+            for(int j=0; j<4; ++j)
+            {
+                int r1 = r+dir[j][0];
+                int c1 = c+dir[j][1];
+                if ((r1>=0) && (c1>=0) && (r1<rows) && (c1<cols) && visited[r1][c1])
+                    uf.Union(r*cols+c, r1*cols+c1);
+            }
+            if (uf.find(0) == uf.find(rows*cols-1))
+                return grid[r][c];
+        }
+        return -1;
+    }
+};
