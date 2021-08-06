@@ -1,0 +1,21 @@
+class Solution {
+private:
+    vector<int> wsum;
+public:
+    Solution(vector<int>& w) {
+        for(auto num: w)
+            wsum.push_back(num + (wsum.empty()?0:wsum.back()));
+    }
+    
+    int pickIndex() {
+        float random = ((float)rand())/RAND_MAX;
+        int val = random*wsum.back();
+        return upper_bound(wsum.begin(), wsum.end(), val)-wsum.begin();
+    }
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(w);
+ * int param_1 = obj->pickIndex();
+ */
