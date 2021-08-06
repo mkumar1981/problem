@@ -1,0 +1,27 @@
+class Solution {
+private:
+    int wlen;
+    unordered_map<int, int> M;
+public:
+    Solution(int n, vector<int>& blacklist) {
+        wlen = n - blacklist.size();
+        unordered_set<int> w;
+        for(int i=wlen; i<n; ++i)
+        {
+            w.insert(i);      
+        }
+        for(auto b: blacklist)
+            w.erase(b);
+        auto iter = w.begin();
+        for(auto b: blacklist)
+        {
+            if (b<wlen)
+                M[b] = *iter++;
+        }
+    }
+    
+    int pick() {
+        int num = rand()%wlen;
+        return (M.count(num)!=0 ?M[num]:num);
+    }
+};
