@@ -1,0 +1,29 @@
+class Solution {
+public:
+    class Tri
+    {
+    private:
+        vector<int> nums;
+    public:
+        Tri()
+        {
+            nums.resize(38);
+            nums[0] = 0;
+            nums[1] = 1;
+            nums[2] = 1;
+            for(int i=3; i<38; ++i)
+                nums[i] = nums[i-1] + nums[i-2] + nums[i-3];
+        }
+        int getResult(int n)
+        {
+            return nums[n];
+        }
+    };
+public:
+    int tribonacci(int n) {
+        static Tri* t = nullptr;
+        if (t==nullptr)
+            t = new Tri();
+        return t->getResult(n);
+    }
+};
