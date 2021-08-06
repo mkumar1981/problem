@@ -1,0 +1,45 @@
+class Solution {
+private:
+    long dp[31][31];
+    const int mod = 1000000007;
+    void nCk()
+    {
+        for(int i=0; i<31; ++i)
+        {
+            dp[i][0] = 1;
+            for(int j=1; j<=i; ++j)
+            {
+                dp[i][j] = (dp[i-1][j]+dp[i-1][j-1])%mod;
+            }
+        }
+    }
+    int comb(int n, int k)
+    {
+        return dp[n][k];
+    }
+public:
+    string kthSmallestPath(vector<int>& destination, int k) {
+        int V_Count = destination[0];
+        int H_Count = destination[1];
+        string ans;
+        int n = V_Count + H_Count;
+        int remaining_V_Count = V_Count;
+        nCk();
+        for (int i=0; i<n; ++i)
+        {
+            int count = comb(n-1-i, remaining_V_Count);
+            if (H_Count>0 && count>=k)
+            {
+                ans += 'H';
+                --H_Count;
+            }
+            else
+            {
+                ans += 'V';
+                --remaining_V_Count;
+                k -= count;
+            }
+        }
+        return ans;
+    }
+};
