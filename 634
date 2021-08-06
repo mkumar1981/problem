@@ -1,0 +1,16 @@
+class Solution {
+public:
+    int findDerangement(int n) {
+        int mod = 1000000007;
+        if (n<=1) return 0;
+        else if (n==2) return 1;
+        long minusTwo = 0, minusOne = 1;
+        for(int i=3; i<=n; ++i)
+        {
+            long ans = (((minusTwo+minusOne)%mod)*(i-1))%mod;
+            minusTwo = minusOne;
+            minusOne = ans;
+        }
+        return minusOne;
+    }
+};
