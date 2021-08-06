@@ -1,0 +1,25 @@
+class Solution {
+private:
+    int cnt, c;
+    unordered_set<int> hset;
+public:
+    Solution(int m, int n) {
+        c = n;
+        cnt = m*n;
+    }
+    
+    vector<int> flip() {
+        int index = rand()%cnt;
+        while (hset.count(index))
+        {
+            ++index;
+            index %= cnt;
+        }
+        hset.insert(index);
+        return {index/c, index%c};
+    }
+    
+    void reset() {
+        hset.clear();
+    }
+};
