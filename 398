@@ -1,0 +1,24 @@
+class Solution {
+private:
+    vector<int> _nums;
+public:
+    Solution(vector<int>& nums) {
+        _nums = std::move(nums);
+    }
+    
+    int pick(int target) {
+        int count = 0;
+        int ans = -1;
+        for(int i = 0; i<_nums.size(); ++i)
+        {
+            if (_nums[i]==target)
+            {
+                ++count;
+                float random = ((float)rand())/RAND_MAX;
+                if (random<1.0/count)
+                    ans = i; 
+            }
+        }
+        return ans;
+    }
+};
