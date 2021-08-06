@@ -1,0 +1,14 @@
+class Solution {
+public:
+    int climbStairs(int n) {
+        int minusTwo = 1, minusOne = 1;
+        for (int i=2; i<=n; ++i)
+        {
+            int ans = minusOne+minusTwo;
+            minusTwo=minusOne;
+            minusOne = ans;
+        }
+        return minusOne;
+        
+    }
+};
