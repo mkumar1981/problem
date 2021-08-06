@@ -1,0 +1,24 @@
+class Solution {
+private:
+    int nCk(int n, int k, vector<vector<int>>& memo)
+    {
+        if (n==0 || k==0 || n == k)
+            return 1;
+        else if (n<0)
+            return 0;
+        else if (k==1)
+            return n;
+        else if (memo[n][k] != -1)
+            return memo[n][k];
+        memo[n][k] = nCk(n-1, k, memo) + nCk(n-1, k-1, memo);
+        return memo[n][k];
+    }
+public:
+    int uniquePaths(int m, int n) {
+        int total = (m+n-2);
+        int k = m-1;
+        vector<vector<int>> memo(total+1, vector<int>(k+1, -1));
+        return nCk(total, k, memo);
+        
+    }
+};
