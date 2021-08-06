@@ -1,0 +1,52 @@
+class Solution {
+private:
+    unordered_map<string, unordered_map<string, double>> graphMap;
+    double bfs(string& s, string& d)
+    {
+        queue<pair<string, double>> q;
+        q.push({s, 1.0});
+        unordered_set<string> seen;
+        while (!q.empty())
+        {
+            auto node = q.front();
+            q.pop();
+            seen.insert(node.first);
+            if (node.first == d)
+                return node.second;
+            for(auto& iter: graphMap[node.first])
+            {
+                if (seen.count(iter.first) == 0)
+                    q.push({iter.first, node.second*iter.second});
+            }
+        }
+        return -1.0;
+    }
+public:
+    vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
+        for(int i=0; i<equations.size(); ++i)
+        {
+            string dividend = equations[i][0];
+            string divisor = equations[i][1];
+            graphMap[dividend].insert({divisor, values[i]});
+            graphMap[divisor].insert({dividend, 1/values[i]});
+        }
+        vector<double> result;
+        int n = queries.size();
+        for(int i=0; i<n; ++i)
+        {
+            double res = 0.0;
+            string s1 = queries[i][0];
+            string s2 = queries[i][1];
+            auto iter1 = graphMap.find(s1);
+            auto iter2 = graphMap.find(s2);
+            if (iter1==graphMap.end() || iter2 == graphMap.end())
+                res = -1.0;
+            else if (s1==s2)
+                res = 1.0;
+            else
+                res = bfs(s1, s2);
+            result.push_back(res);
+        }
+        return result;
+    }
+};
