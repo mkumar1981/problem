@@ -1,0 +1,21 @@
+class Solution {
+private:
+    double rad;
+    double xc, yc;
+    mt19937 mt{random_device{}()};
+    uniform_real_distribution<double> uf{0, 1};
+public:
+    Solution(double radius, double x_center, double y_center) {
+        rad = radius;
+        xc = x_center;
+        yc = y_center;
+    }
+    
+    vector<double> randPoint() {
+        double d = sqrt(uf(mt))*rad;
+        double theta = uf(mt) * 2 * M_PI;
+        double x = xc + d*cos(theta);
+        double y = yc + d*sin(theta);
+        return {x, y};
+    }
+};
