@@ -1,0 +1,93 @@
+class Solution {
+private:
+    class UnionFind
+    {
+    private:
+        vector<int> parent;
+        vector<int> sizes;
+    public:
+        UnionFind(int n )
+        {
+            parent.resize(n);
+            sizes.resize(n);
+            for(int i=0; i<n; ++i)
+            {
+                parent[i] = i;
+                sizes[i] = 1;
+            }
+        }
+        int find(int x)
+        {
+            if (parent[x] == x)
+                return x;
+            return parent[x] = find(parent[x]);
+        }
+        void Union(int x, int y)
+        {
+            int p1 = find(x);
+            int p2 = find(y);
+            if (p1!=p2)
+            {
+                if (sizes[p1]<sizes[p2])
+                {
+                    parent[p1] = p2;
+                    sizes[p2] += sizes[p1];
+                }
+                else
+                {
+                    parent[p2] = p1;
+                    sizes[p1] += sizes[p2];
+                }
+            }
+        }
+    };
+    vector<int> getPrimeFactor(int num)
+    {
+        unordered_set<int> seen;
+        vector<int> result;
+        int factor = 2;
+        while (num>=factor*factor)
+        {
+            if (num%factor==0)
+            {
+                if (seen.count(factor)==0)
+                {
+                    seen.insert(factor);
+                    result.push_back(factor);
+                }
+                num /= factor;
+            }
+            else
+            {
+                ++factor;
+            }
+        }
+        result.push_back(num);
+        return result;
+    }
+public:
+    int largestComponentSize(vector<int>& nums) {
+        int maxNum = 0;
+        for(auto num: nums)
+            maxNum = max(num, maxNum);
+        UnionFind uf(maxNum+1);
+        unordered_map<int, int> primeMap;
+        for(auto num: nums)
+        {
+            auto primeFactors = getPrimeFactor(num);
+            primeMap[num] = primeFactors[0];
+            for(int i=0; i<primeFactors.size()-1; ++i)
+                uf.Union(primeFactors[i], primeFactors[i+1]);
+        }
+        maxNum = 1;
+        unordered_map<int, int> freqMap;
+        for(auto num: nums)
+        {
+            auto factor = primeMap[num];
+            auto group = uf.find(factor);
+            ++freqMap[group];
+            maxNum = max(maxNum, freqMap[group]);
+        }
+        return maxNum;
+    }
+};
