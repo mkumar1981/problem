@@ -1,0 +1,53 @@
+class StreamChecker {
+private:
+    struct TrieNode
+    {
+        unordered_map<char, TrieNode*> children;
+        bool word;
+        TrieNode()
+        {
+            word = false;
+        }
+    };
+    TrieNode* root;
+    deque<char> dq;
+public:
+    StreamChecker(vector<string>& words) {
+        root = new TrieNode();
+        for(auto& word: words)
+        {
+            TrieNode* node = root;
+            reverse(word.begin(), word.end());
+            for(int i=0; i<word.length(); ++i)
+            {
+                auto iter = node->children.find(word[i]);
+                if (iter == node->children.end())
+                {
+                    TrieNode* node1 = new TrieNode();
+                    node->children[word[i]] = node1;
+                    node = node1;
+                }
+                else
+                {
+                    node = iter->second;
+                }
+            }
+            node->word = true;
+        }
+    }
+    
+    bool query(char letter) {
+        dq.push_front(letter);
+        TrieNode* node = root;
+        for(auto ch: dq)
+        {
+            if (node->word)
+                return true;
+            auto iter = node->children.find(ch);
+            if (iter == node->children.end())
+                return false;
+            node = iter->second;
+        }
+        return node->word;
+    }
+};
