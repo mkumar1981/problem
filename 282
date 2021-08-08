@@ -1,0 +1,36 @@
+class Solution {
+private:
+    void helper(string& num, int pos, long sum, long target, long prev, string res, vector<string>& ans)
+    {
+        if (pos == num.length())
+        {
+            if (sum==target)
+            {
+                ans.push_back(res);
+            }
+            return;
+        }
+        for (int i=pos; i<num.length(); ++i)
+        {
+            string temp = num.substr(pos, (i-pos+1));
+            if (temp.length()>1 && temp[0] == '0')
+                return;
+            if (res.length()==0)
+                helper(num, i+1, stol(temp), target, stol(temp), temp, ans);
+            else
+            {
+                long n = stol(temp);
+                helper(num, i+1, sum+n, target, n, res+'+'+temp, ans);
+                helper(num, i+1, sum-n, target, -n, res+'-'+temp, ans);
+                helper(num, i+1, sum-prev+(prev*n), target, (prev*n), res+'*'+temp, ans);
+            }
+        }
+    }
+public:
+    vector<string> addOperators(string num, int target) {
+        vector<string> ans;
+        string res;
+        helper(num, 0, 0, target, 0, res, ans);
+        return ans;
+    }
+};
