@@ -1,0 +1,41 @@
+class Solution {
+public:
+    int robotSim(vector<int>& commands, vector<vector<int>>& obstacles) {
+        int dir[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        unordered_set<string> seen;
+        for(int i=0; i<obstacles.size(); ++i)
+        {
+            string s = to_string(obstacles[i][0]) + '#' + to_string(obstacles[i][1]);
+            seen.insert(s);
+        }
+        int x = 0, y = 0, d = 0;
+        int result = 0;
+        for(int i=0; i<commands.size(); ++i)
+        {
+            if (commands[i] == -2)
+            {
+                --d;  
+            }
+            else if (commands[i] == -1)
+            {
+                ++d;
+            }
+            else
+            {
+                for(int j=0; j<commands[i]; ++j)
+                {
+                    int x1 = x + dir[d][0];
+                    int y1 = y + dir[d][1];
+                    string temp = to_string(x1) + '#' + to_string(y1);
+                    if (seen.count(temp))
+                        break;
+                    x = x1;
+                    y = y1;
+                }
+                result = max(result, (x*x+y*y));
+            }
+            d = (d+4)%4;
+        }
+        return result;
+    }
+};
