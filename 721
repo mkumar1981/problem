@@ -1,0 +1,85 @@
+class Solution {
+private:
+    class UnionFind
+    {
+    private:
+        vector<int> parent;
+        vector<int> sizes;
+    public:
+        UnionFind(vector<vector<string>>& accounts)
+        {
+            int n = accounts.size();
+            parent.resize(n);
+            sizes.resize(n);
+            for(int i=0; i<n; ++i)
+            {
+                parent[i] = i;
+                sizes[i] = accounts[i].size();
+            }
+        }
+        int find(int x)
+        {
+            if (parent[x] == x)
+                return x;
+            return parent[x] = find(parent[x]);
+        }
+        void Union(int x, int y)
+        {
+            int p1 = find(x);
+            int p2 = find(y);
+            if (p1!=p2)
+            {
+                if (sizes[p1]<sizes[p2])
+                {
+                    parent[p1] = p2;
+                    sizes[p2] += sizes[p1];
+                }
+                else
+                {
+                    parent[p2] = p1;
+                    sizes[p1] += sizes[p2];
+                }
+            }
+        }
+    };
+public:
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
+        unordered_map<string, vector<int>> emailToIndexMap;
+        for (int i=0; i<accounts.size(); ++i)
+        {
+            for(int j=1; j<accounts[i].size(); ++j)
+            {
+                emailToIndexMap[accounts[i][j]].push_back(i);
+            }
+        }
+        UnionFind uf(accounts);
+        for(auto& iter: emailToIndexMap)
+        {
+            for(int j=1; j<iter.second.size(); ++j)
+                uf.Union(iter.second[j-1], iter.second[j]);
+        }
+        unordered_map<int, vector<int>> groupToIndexMap;
+        for(int i=0; i<accounts.size(); ++i)
+        {
+            int groupId = uf.find(i);
+            groupToIndexMap[groupId].push_back(i);
+        }
+        vector<vector<string>> result;
+        for(auto& iter: groupToIndexMap)
+        {
+            set<string> emails;
+            for (int j=0; j<iter.second.size(); ++j)
+            {
+                int index = iter.second[j];
+                for(int k=1; k<accounts[index].size(); ++k)
+                    emails.insert(accounts[index][k]);
+            }
+            vector<string> ans;
+            ans.push_back(accounts[iter.second[0]][0]);
+            for(auto& iter: emails)
+                ans.push_back(iter);
+            result.push_back(ans);
+        }
+        return result;
+    }
+};
