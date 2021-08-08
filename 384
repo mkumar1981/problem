@@ -1,0 +1,32 @@
+class Solution {
+private:
+    vector<int> onums;
+    vector<int> snums;
+    void swap(int* a, int* b)
+    {
+        int temp = *a;
+        *a = *b;
+        *b = temp;
+    }
+public:
+    Solution(vector<int>& nums) {
+        onums.assign(nums.begin(), nums.end());
+        snums = std::move(nums);
+    }
+    
+    /** Resets the array to its original configuration and return it. */
+    vector<int> reset() {
+        snums.assign(onums.begin(), onums.end());
+        return snums;
+    }
+    
+    /** Returns a random shuffling of the array. */
+    vector<int> shuffle() {
+        for (int i=0; i<snums.size(); ++i)
+        {
+            int index = i + rand()%(snums.size()-i);
+            swap(&snums[i], &snums[index]);
+        }
+        return snums;
+    }
+};
