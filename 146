@@ -1,0 +1,39 @@
+class LRUCache {
+private:
+    unordered_map<int, list<pair<int, int>>::iterator> cacheMap;
+    std::list<pair<int, int>> data;
+    int capacity;
+public:
+    LRUCache(int capacity) {
+        this->capacity = capacity;
+    }
+    
+    int get(int key) {
+        auto iter = cacheMap.find(key);
+        if (iter == cacheMap.end())
+            return -1;
+        int ret = iter->second->second;
+        data.erase(iter->second);
+        data.push_front({key, ret});
+        cacheMap[key] = data.begin();
+        return ret;
+    }
+    
+    void put(int key, int value) {
+        auto iter = cacheMap.find(key);
+        if (iter != cacheMap.end())
+        {
+            data.erase(iter->second);
+            cacheMap.erase(key);
+        }
+        else if (cacheMap.size() == capacity)
+        {
+            auto iter = data.end();
+            --iter;
+            cacheMap.erase((*iter).first);
+            data.erase(iter);
+        }
+        data.push_front({key, value});
+        cacheMap[key] = data.begin();
+    }
+};
