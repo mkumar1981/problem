@@ -1,0 +1,34 @@
+class Solution {
+private:
+    int dfs(string& word, unordered_set<string>& dict, unordered_map<string, int>& memo)
+    {
+        if (memo.count(word))
+            return memo[word];
+        int maxLength = 1;
+        for(int i=0; i<word.length(); ++i)
+        {
+            string temp = word.substr(0, i) + word.substr(i+1);
+            if (dict.count(temp))
+            {
+                int ans = 1+dfs(temp, dict, memo);
+                maxLength = max(maxLength, ans);
+            }
+        }
+        memo[word] = maxLength;
+        return maxLength;
+    }
+public:
+    int longestStrChain(vector<string>& words) {
+        unordered_set<string> wordSet;
+        for(auto& word: words)
+            wordSet.insert(word);
+        unordered_map<string, int> memo;
+        int maxLength = 0;
+        for(auto& word: words)
+        {
+            int ans = dfs(word, wordSet, memo);
+            maxLength = max(maxLength, ans);
+        }
+        return maxLength;
+    }
+};
