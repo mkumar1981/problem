@@ -1,0 +1,36 @@
+class Solution {
+private:
+    static const char WATER = '0';
+    static const char LAND = '1';
+    void dfs(vector<vector<char>>& grid, int r, int c, int nrows, int ncols)
+    {
+        int dir[4][2] = {{-1,0}, {0, 1}, {1,0}, {0, -1}};
+        grid[r][c] = WATER;
+        for(int i=0; i<4; ++i)
+        {
+            int nr = r+dir[i][0];
+            int nc = c+dir[i][1];
+            if ((nr>=0)&&(nc>=0)&&(nr<nrows)&&(nc<ncols)&&grid[nr][nc]==LAND)
+                dfs(grid, nr, nc, nrows, ncols);
+        }
+        
+    }
+public:
+    int numIslands(vector<vector<char>>& grid) {
+        int m = grid.size();
+        int n = grid[0].size();
+        int island = 0;
+        for (int i=0; i<m; ++i)
+        {
+            for(int j=0; j<n; ++j)
+            {
+                if(grid[i][j]==LAND)
+                {
+                    ++island;
+                    dfs(grid, i, j, m, n);
+                }
+            }
+        }
+        return island;
+    }
+};
