@@ -1,0 +1,41 @@
+class RandomizedSet {
+private:
+    unordered_map<int, int> cache;
+    vector<int> data;
+public:
+    /** Initialize your data structure here. */
+    RandomizedSet() {
+        
+    }
+    
+    /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+    bool insert(int val) {
+        if (cache.count(val))
+            return false;
+        cache[val] = data.size();
+        data.push_back(val);
+        return true;
+    }
+    
+    /** Removes a value from the set. Returns true if the set contained the specified element. */
+    bool remove(int val) {
+        auto iter = cache.find(val);
+        if (iter == cache.end())
+            return false;
+        int index = iter->second;
+        int size = data.size();
+        int replace = data[size-1];
+        cache[replace] = index;
+        data[index] = replace;
+        data.pop_back();
+        cache.erase(iter);
+        return true;
+    }
+    
+    /** Get a random element from the set. */
+    int getRandom() {
+        int index = rand()%data.size();
+        return data[index];
+    }
+};
+
