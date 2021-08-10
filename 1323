@@ -1,0 +1,25 @@
+class Solution {
+public:
+    int maximum69Number (int num) {
+        int reverseNumber = 0;
+        while (num)
+        {
+            reverseNumber = reverseNumber*10+num%10;
+            num /= 10;
+        }
+        
+        int add = 3;
+        while (reverseNumber)
+        {
+            int x = reverseNumber%10;
+            if (x==6)
+            {
+                x += add;
+                add = 0;
+            }
+            num = num*10+x;
+            reverseNumber /= 10;    
+        }
+        return num;
+    }
+};
