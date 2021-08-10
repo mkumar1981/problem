@@ -1,0 +1,50 @@
+class Solution {
+public:
+    int openLock(vector<string>& deadends, string target) {
+        unordered_set<string> deadset;
+        for(auto& str: deadends)
+            deadset.insert(str);
+        if (deadset.count("0000"))
+            return -1;
+        queue<string> q;
+        q.push("0000");
+        int steps = 0;
+        unordered_set<string> visited;
+        while (!q.empty())
+        {
+            int size = q.size();
+            for(int i=0; i<size; ++i)
+            {
+                string t = q.front();
+                if (t==target)
+                    return steps;
+                q.pop();
+                for(int j=0; j<4; ++j)
+                {
+                    string s = t;
+                    int num = s[j]-'0';
+                    int num1 = num+1;
+                    num1 %= 10;
+                    s[j] = num1+'0';
+                    if (deadset.count(s)==0 && visited.count(s)==0)
+                    {
+                        visited.insert(s);
+                        q.push(s);
+                    }
+                    num1 = num-1;
+                    if (num1<0)
+                        num1 += 10;
+                    s[j] = num1+'0';
+                    if (deadset.count(s) == 0 && visited.count(s) == 0)
+                    {
+                        visited.insert(s);
+                        q.push(s);
+                    }
+                }
+            }
+            ++steps;
+
+        }
+        return -1;
+    }
+};
