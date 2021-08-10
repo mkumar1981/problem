@@ -1,0 +1,37 @@
+class Solution {
+private:
+    bool isMatch(string& s, string& p, int i, int j, vector<vector<int>>& memo)
+    {
+        if (memo[i][j] != -1)
+        {
+            return (memo[i][j]==1)?true:false;
+        }
+        bool ans = false;
+        if (j==p.length())
+        {
+            ans = (i==s.length());
+        }
+        else
+        {
+            bool first_match = ((i<s.length())&&((s[i]==p[j])||(p[j]=='?')||(p[j]=='*')));
+            if (p[j]=='*')
+            {
+                ans = isMatch(s, p, i, j+1, memo) ||
+                        first_match && isMatch(s, p, i+1, j, memo);
+            }
+            else
+            {
+                ans = first_match && isMatch(s, p, i+1, j+1, memo);
+            }
+        }
+        memo[i][j] = ans;
+        return memo[i][j];
+    }
+public:
+    bool isMatch(string s, string p) {
+        int len1 = s.length();
+        int len2 = p.length();
+        vector<vector<int>> memo(len1+1, vector<int>(len2+1, -1));
+        return isMatch(s, p, 0, 0, memo);
+    }
+};
