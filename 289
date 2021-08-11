@@ -1,0 +1,41 @@
+class Solution {
+public:
+    void gameOfLife(vector<vector<int>>& board) {
+        int m = board.size();
+        int n = board[0].size();
+        
+        int dir[8][2] = {{-1,-1}, {-1,1}, {1,-1}, {1, 1}, {-1,0}, {0, 1}, {1, 0}, {0, -1}};
+        
+        for(int row=0; row<m; ++row)
+        {
+            for(int col=0; col<n; ++col)
+            {
+                int liveNeighbors = 0;
+
+                for(int i=0; i<8; ++i)
+                {
+                    int r = row+dir[i][0];
+                    int c = col+dir[i][1];
+                    if (r>=0 && c>=0 && r<m&&c<n && abs(board[r][c])==1)
+                        ++liveNeighbors;
+                }
+                if (board[row][col]==1 && (liveNeighbors>3 || liveNeighbors<2))
+                    board[row][col] = -1;
+                else if (board[row][col]==0 && liveNeighbors==3)
+                    board[row][col] = 2;
+            }
+        }
+        
+        for(int i=0; i<m; ++i)
+        {
+            for(int j=0; j<n; ++j)
+            {
+                if(board[i][j]>0)
+                    board[i][j] = 1;
+                else
+                    board[i][j] = 0;
+            }
+        }
+        
+    }
+};
