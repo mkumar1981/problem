@@ -1,0 +1,49 @@
+class Solution {
+private:
+    int dp[101][101][21];
+    int minCost(vector<int>& houses, vector<vector<int>>& cost, int m, int n, int i,
+                     int prev_color, int target)
+    {
+        if (i==m)
+        {
+            if (target==0)
+                return 0;
+            return INT_MAX;
+        }
+        else if (target<0)
+            return INT_MAX;
+        else if (dp[i][target][prev_color]!=-1)
+            return dp[i][target][prev_color];
+        int ans = INT_MAX;
+        if (houses[i])
+        {
+            if (prev_color==houses[i])
+                ans = minCost(houses, cost, m, n, i+1, prev_color, target);
+            else
+                ans = minCost(houses, cost, m, n, i+1, houses[i], target-1);
+        }
+        else
+        {
+            for(int j=1; j<=n; ++j)
+            {
+                int temp = INT_MAX;
+                
+                if (prev_color==j)
+                    temp = minCost(houses, cost, m, n, i+1, prev_color, target);
+                else
+                    temp = minCost(houses, cost, m, n, i+1, j, target-1);
+                
+                if (temp!=INT_MAX)
+                    ans = min(ans, (temp+cost[i][j-1]));
+            }
+        }
+        dp[i][target][prev_color] = ans;
+        return ans; 
+    }
+public:
+    int minCost(vector<int>& houses, vector<vector<int>>& cost, int m, int n, int target) {
+        memset(dp, -1, sizeof(dp));
+        int ans = minCost(houses, cost, m, n, 0, 0, target);
+        return (ans==INT_MAX)?-1:ans;
+    }
+};
