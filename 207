@@ -1,0 +1,51 @@
+class Solution {
+private:
+    class Graph
+    {
+    private:
+        list<int> *adjList;
+        vector<int> indegree;
+    public:
+        Graph(int n)
+        {
+            adjList = new list<int>[n];
+            indegree.resize(n, 0);
+        }
+        void buildGraph(vector<vector<int>>& prerequisites)
+        {
+            for(auto& courses: prerequisites)
+            {
+                adjList[courses[1]].push_back(courses[0]);
+                ++indegree[courses[0]];
+            }
+        }
+        bool canCompleteCourse()
+        {
+            int courses = 0;
+            queue<int> q;
+            for(int i=0; i<indegree.size(); ++i)
+            {
+                if (indegree[i] == 0)
+                    q.push(i);
+            }
+            while (!q.empty())
+            {
+                int u = q.front();
+                q.pop();
+                ++courses;
+                for(auto v: adjList[u])
+                {
+                    if (--indegree[v] == 0)
+                        q.push(v);
+                }
+            }
+            return (courses==indegree.size());
+        }
+    };
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        Graph g(numCourses);
+        g.buildGraph(prerequisites);
+        return g.canCompleteCourse();
+    }
+};
