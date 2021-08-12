@@ -1,0 +1,76 @@
+class Solution {
+private:
+    vector<int> topo_sort(unordered_map<int, vector<int>>& graph)
+    {
+        unordered_map<int, int> indegreeMap;
+        for(auto& iter: graph)
+        {
+            auto iter1 = indegreeMap.find(iter.first);
+            if (iter1 == indegreeMap.end())
+                indegreeMap[iter.first] = 0;
+            for(int v: iter.second)
+                ++indegreeMap[v];
+        }
+        queue<int> q;
+        for(auto& iter: indegreeMap)
+        {
+            if (iter.second == 0)
+                q.push(iter.first);
+        }
+        vector<int> result;
+        while (!q.empty())
+        {
+            auto u = q.front();
+            q.pop();
+            result.push_back(u);
+            for(int v: graph[u])
+            {
+                if (--indegreeMap[v] == 0)
+                    q.push(v);
+            }
+        }
+        return result;
+    }
+public:
+    vector<int> sortItems(int n, int m, vector<int>& groups, vector<vector<int>>& beforeItems) {
+        unordered_map<int, vector<int>> groupMap;
+        unordered_map<int, unordered_map<int, vector<int>>> innerGroup;
+        unordered_map<int, vector<int>> interGroup;
+        
+        for (int i=0; i<n; ++i)
+        {
+            int gid = (groups[i]==-1)?(m+i):groups[i];
+            groupMap[gid].push_back(i);
+        }
+        for (int i=0; i<n; ++i)
+        {
+            int gid = (groups[i]==-1)?(m+i):groups[i];
+            interGroup[gid];
+            innerGroup[gid][i];
+            int size = beforeItems[i].size();
+            for(int j=0; j<size; ++j)
+            {
+                int item = beforeItems[i][j];
+                int group_b = (groups[item]==-1)?(m+item):groups[item];
+                if (group_b == gid)
+                {
+                    innerGroup[gid][item].push_back(i);
+                }
+                else
+                {
+                    interGroup[group_b].push_back(gid);
+                }
+            }
+        }
+        vector<int> ans;
+        auto sorted_groups = topo_sort(interGroup);
+        for(auto group: sorted_groups)
+        {
+            auto& graph = innerGroup[group];
+            auto nodes = topo_sort(graph);
+            for (auto node: nodes)
+                ans.push_back(node);
+        }
+        return (ans.size()==n)?ans:vector<int>();
+    }
+};
