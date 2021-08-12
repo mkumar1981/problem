@@ -1,0 +1,51 @@
+class Solution {
+public:
+    bool sequenceReconstruction(vector<int>& org, vector<vector<int>>& seqs) {
+        unordered_map<int, int> indegree;
+        unordered_map<int, vector<int>> graphMap;
+        for(int i=0; i<seqs.size(); ++i)
+        {
+            auto iter = indegree.find(seqs[i][0]);
+            if (iter == indegree.end())
+                indegree[seqs[i][0]] = 0;
+            for(int j=1; j<seqs[i].size(); ++j)
+            {
+                auto iter = indegree.find(seqs[i][j-1]);
+                if (iter == indegree.end())
+                    indegree[seqs[i][j-1]] = 0;
+                ++indegree[seqs[i][j]];
+                graphMap[seqs[i][j-1]].push_back(seqs[i][j]);
+            }
+        }
+        if (org.size() != indegree.size())
+            return false;
+        queue<int> q;
+        for(auto& iter: indegree)
+        {
+            if (iter.second == 0)
+                q.push(iter.first);
+        }
+        if (q.size()>1)
+            return false;
+        int k = 0;
+        while (!q.empty())
+        {
+            int u = q.front();
+            q.pop();
+            if (k==org.size())
+                return true;
+            else if (u!=org[k]) 
+                return false;
+            else
+                ++k;
+            for (auto& v: graphMap[u])
+            {
+                if (--indegree[v] == 0)
+                    q.push(v);
+            }
+            if (q.size()>1)
+                return false;
+        }
+        return (k==org.size()?true:false);
+    }
+};
