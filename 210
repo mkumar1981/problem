@@ -1,0 +1,55 @@
+class Solution {
+private:
+    class Graph
+    {
+    private:
+        list<int>* adjList;
+        vector<int> indegree;
+    public:
+        Graph(int n)
+        {
+            adjList = new list<int>[n];
+            indegree.resize(n, 0);
+        }
+        void buildGraph(vector<vector<int>>& prerequisites)
+        {
+            for(auto& courses: prerequisites)
+            {
+                adjList[courses[1]].push_back(courses[0]);
+                ++indegree[courses[0]];
+            }
+        }
+        vector<int> getCourseOrder()
+        {
+            int courses = 0;
+            vector<int> result;
+            queue<int> q;
+            for(int i=0; i<indegree.size(); ++i)
+            {
+                if (indegree[i] == 0)
+                    q.push(i);
+            }
+            while (!q.empty())
+            {
+                int u = q.front();
+                q.pop();
+                ++courses;
+                result.push_back(u);
+                for(auto v: adjList[u])
+                {
+                    if (--indegree[v] == 0)
+                        q.push(v);
+                }
+            }
+            if (courses != indegree.size())
+                return vector<int>();
+            return result;
+        }
+    };
+public:
+    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+        Graph g(numCourses);
+        g.buildGraph(prerequisites);
+        return g.getCourseOrder();
+    }
+};
