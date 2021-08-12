@@ -1,0 +1,71 @@
+class Solution {
+private:
+    class UnionFind
+    {
+    private:
+        vector<int> parent;
+        vector<int> size;
+    public:
+        UnionFind(int n)
+        {
+            parent.resize(n, 0);
+            size.resize(n, 0);
+            for(int i=0; i<n; ++i)
+            {
+                parent[i] = i;
+                size[i] = 1;
+            }
+        }
+        bool Union(int x, int y)
+        {
+            int px = find(x);
+            int py = find(y);
+            if (px!=py)
+            {
+                if (size[px]<size[py])
+                {
+                    size[py] += size[px];
+                    parent[px] = py;
+                }
+                else
+                {
+                    size[px] += size[py];
+                    parent[py] = px;
+                }
+                return true;
+            }
+            return false;
+        }
+        
+        int find(int x)
+        {
+            if (parent[x]==x)
+                return x;
+            return parent[x] = find(parent[x]);
+        }
+    };
+public:
+    bool containsCycle(vector<vector<char>>& grid) {
+        int m = grid.size();
+        int n = grid[0].size();
+        UnionFind uf(m*n);
+        for (int i=0; i<m; ++i)
+        {
+            for(int j=0; j<n; ++j)
+            {
+                int index = i*n+j;
+                if (j+1<n && grid[i][j] == grid[i][j+1])
+                {
+                    if (!uf.Union(index, ((i*n)+(j+1))))
+                        return true;
+                }
+                if (i+1<m && grid[i][j] == grid[i+1][j])
+                {
+                    if (!uf.Union(index, (((i+1)*n)+j)))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+};
