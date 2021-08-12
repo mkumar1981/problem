@@ -1,0 +1,50 @@
+class Solution {
+public:
+    string alienOrder(vector<string>& words) {
+        unordered_map<char, int> indegreeMap;
+        unordered_map<char, vector<char>> graph;
+        int n = words.size();
+        for(auto& word: words)
+        {
+            for(auto ch: word)
+                indegreeMap[ch] = 0;
+        }
+        for(int i=0; i<n-1; ++i)
+        {
+            int len1 = words[i].length();
+            int len2 = words[i+1].length();
+            int len = min(len1, len2);
+            int j = 0;
+            for(; j<len; ++j)
+            {
+                if (words[i][j] != words[i+1][j])
+                {
+                    graph[words[i][j]].push_back(words[i+1][j]);
+                    ++indegreeMap[words[i+1][j]];
+                    break;
+                }
+            }
+            if (j==len && words[i].length()>len)
+                return "";
+        }
+        string ans;
+        queue<char> q;
+        for(auto& iter: indegreeMap)
+        {
+            if (iter.second==0)
+                q.push(iter.first);
+        }
+        while (!q.empty())
+        {
+            char ch = q.front();
+            q.pop();
+            ans += ch;
+            for(char c: graph[ch])
+            {
+                if (--indegreeMap[c]==0)
+                    q.push(c);
+            }
+        }
+        return (ans.length()==indegreeMap.size())?ans:"";
+    }
+};
