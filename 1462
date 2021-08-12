@@ -1,0 +1,46 @@
+class Solution {
+public:
+    vector<bool> checkIfPrerequisite(int numCourses, vector<vector<int>>& prerequisites, vector<vector<int>>& queries) {
+        int n = numCourses;
+        list<int> adjList[n];
+        vector<int> indegree(n, 0);
+        vector<vector<bool>> memo(n, vector<bool>(n, false));
+        for(auto& edge: prerequisites)
+        {
+            adjList[edge[0]].push_back(edge[1]);
+            ++indegree[edge[1]];
+            memo[edge[1]][edge[0]] = true;
+        }
+        queue<int> q;
+        for (int i=0; i<n; ++i)
+        {
+            if (indegree[i]==0)
+                q.push(i);
+        }
+        while (!q.empty())
+        {
+            int x = q.front();
+            q.pop();
+            for(auto neigh: adjList[x])
+            {
+                for(int i=0; i<n; ++i)
+                {
+                    if (memo[x][i])
+                        memo[neigh][i] = true;
+                }
+                if (--indegree[neigh]==0)
+                    q.push(neigh);
+            }
+        }
+        n = queries.size();
+        vector<bool> result(n, false);
+        for(int i =0; i<queries.size(); ++i)
+        {
+            int pre = queries[i][0];
+            int course = queries[i][1];
+            if (memo[course][pre])
+                result[i] = true;
+        }
+        return result;
+    }
+};
