@@ -1,0 +1,21 @@
+class Solution {
+public:
+    vector<int> mostCompetitive(vector<int>& nums, int k) {
+        vector<int> ans;
+        deque<int> dq;
+        
+        for (int i=0; i<nums.size(); ++i)
+        {
+            while (!dq.empty() && dq.back()>nums[i] && (dq.size()+nums.size()-i-1)>=k)
+                dq.pop_back();
+            if (dq.size()<k)
+                dq.push_back(nums[i]);
+        }
+        while (!dq.empty())
+        {
+            ans.push_back(dq.front());
+            dq.pop_front();
+        }
+        return ans;
+    }
+};
