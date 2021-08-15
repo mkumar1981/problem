@@ -1,0 +1,20 @@
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> max_product_so_far(n);
+        vector<int> min_product_so_far(n);
+        vector<int> max_product_in_array(n);
+        max_product_in_array[0] = nums[0];
+        max_product_so_far[0] = nums[0];
+        min_product_so_far[0] = nums[0];
+        for(int i=1; i<n; ++i)
+        {
+            int max_val = max({max_product_so_far[i-1]*nums[i], nums[i], min_product_so_far[i-1]*nums[i]});
+            min_product_so_far[i] = min({min_product_so_far[i-1]*nums[i], nums[i], max_product_so_far[i-1]*nums[i]});
+            max_product_so_far[i] = max_val;
+            max_product_in_array[i] = max(max_product_in_array[i-1], max_val);
+        }
+        return max_product_in_array[n-1];
+    }
+};
