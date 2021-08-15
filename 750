@@ -1,0 +1,28 @@
+class Solution {
+public:
+    int countCornerRectangles(vector<vector<int>>& grid) {
+        int m = grid.size();
+        int n = grid[0].size();
+        map<pair<int, int>, int> count;
+        int ans = 0;
+        for(int i=0; i<m; ++i)
+        {
+            for(int j=0; j<n; ++j)
+            {
+                if (grid[i][j] == 1)
+                {
+                    for (int k=j+1; k<n; ++k)
+                    {
+                        if (grid[i][k])
+                        {
+                            ans += count[make_pair(j, k)];
+                            count[make_pair(j, k)] += 1;
+                        }
+                        
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
