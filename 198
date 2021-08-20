@@ -1,0 +1,13 @@
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int rob_1 = nums[0], notrob = 0;
+        for(int i=1; i<nums.size(); ++i)
+        {
+            int val = max(rob_1, notrob+nums[i]);
+            notrob = rob_1;
+            rob_1 = val;
+        }
+        return rob_1;
+    }
+};
