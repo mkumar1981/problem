@@ -1,0 +1,23 @@
+class Solution {
+private:
+    int helper(vector<vector<int>>& triangle, int row, int col, vector<vector<int>>& memo)
+    {
+        if (row == triangle.size())
+            return 0;
+        else if (col == triangle[row].size())
+            return INT_MAX;
+        else if (memo[row][col] != -1)
+            return memo[row][col];
+        int opt1 = helper(triangle, row+1, col, memo);
+        int opt2 = helper(triangle, row+1, col+1, memo);
+        memo[row][col] = triangle[row][col] + min(opt1, opt2);
+        return memo[row][col];
+    }
+public:
+    int minimumTotal(vector<vector<int>>& triangle) {
+        int row = triangle.size();
+        int col = triangle[row-1].size();
+        vector<vector<int>> memo(row, vector<int>(col, -1));
+        return helper(triangle, 0, 0, memo);
+    }
+};
