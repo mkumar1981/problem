@@ -1,0 +1,16 @@
+class Solution {
+public:
+    int findLongestChain(vector<vector<int>>& pairs) {
+        sort(pairs.begin(), pairs.end(), [](const vector<int>& p1, const vector<int>& p2) { return p1[1]<p2[1];});
+        int curr = INT_MIN, ans = 0;
+        for(auto& pair: pairs)
+        {
+            if (curr<pair[0])
+            {
+                curr = pair[1];
+                ++ans;
+            }
+        }
+        return ans;
+    }
+};
