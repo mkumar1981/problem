@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int longestSubsequence(vector<int>& arr, int difference) {
+        int n = arr.size();
+        unordered_map<int, int> dp;
+        int result = 1;
+        for (int i=0; i<n; ++i)
+        {
+            int diff = arr[i]-difference;
+            if (dp.count(diff))
+            {
+                dp[arr[i]] = dp[diff]+1;
+                result = max(result, dp[arr[i]]);
+            }
+            else
+            {
+                dp[arr[i]] = 1;
+            }
+        }
+        return result;
+    }
+};
