@@ -1,0 +1,19 @@
+class Solution {
+private:
+    pair<int, int> robAux(TreeNode* root)
+    {
+        if (root==nullptr)
+            return {0, 0}; //rob, notrob
+        
+        auto left = robAux(root->left);
+        auto right = robAux(root->right);
+        int rob = root->val+left.second+right.second;
+        int notrob = max(left.first, left.second) + max(right.first, right.second);
+        return {rob, notrob};
+    }
+public:
+    int rob(TreeNode* root) {
+        auto node = robAux(root);
+        return max(node.first, node.second);
+    }
+};
