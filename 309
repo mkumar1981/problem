@@ -1,0 +1,18 @@
+class Solution {
+public:
+    /*
+     * T[i][k][0] = max(T[i-1][k][0], T[i-1][k][1]+prices[i]);
+     * T[i][k][1] = max(T[i-1][k][1], T[i-2][k-1][0]-prices[i]);
+     */
+    int maxProfit(vector<int>& prices) {
+        int Ti_k0_old = 0, Ti_k0 = 0, Ti_k1 = -prices[0], Ti_k0_pre;
+        for (int i=1; i<prices.size(); ++i)
+        {
+            Ti_k0_pre = Ti_k0_old;
+            Ti_k0_old = Ti_k0;
+            Ti_k0 = max(Ti_k0, Ti_k1+prices[i]);
+            Ti_k1 = max(Ti_k1, Ti_k0_pre-prices[i]);
+        }
+        return Ti_k0;
+    }
+};
