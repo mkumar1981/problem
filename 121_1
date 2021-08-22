@@ -1,0 +1,13 @@
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int Ti_11 = numeric_limits<int>::min(), Ti_10 = 0;
+        for(auto price: prices)
+        {
+            Ti_11 = max(Ti_11, -price);
+            Ti_10 = max(Ti_10, Ti_11+price);            
+        }
+        return Ti_10;
+        
+    }
+};
