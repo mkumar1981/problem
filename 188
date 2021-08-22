@@ -1,0 +1,46 @@
+class Solution {
+public:
+    /* Reference: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/discuss/75924/Most-consistent-ways-of-dealing-with-the-series-of-stock-problems
+    */
+    /*
+     * T[i][k][0] = max(T[i-1][k][0], T[i-1][k][1]+prices[i]);
+     * T[i][k][1] = max(T[i-1][k][1], T[i-1][k-1][0]-prices[i]);
+     */ 
+    int maxProfit(int k, vector<int>& prices) {
+        int size = prices.size();
+        if (size == 0)
+            return 0;
+        if (k>=(size>>1))
+        {
+            int Ti_k0 = 0, Ti_k1 = -prices[0];
+            for(int i=1; i<size; ++i)
+            {
+                int Ti_old = Ti_k0;
+                Ti_k0 = max(Ti_k0, Ti_k1+prices[i]);
+                Ti_k1 = max(Ti_k1, Ti_k0-prices[i]);
+            }
+            return Ti_k0;
+        }
+        else
+        {
+            int Ti_k0[k+1];
+            int Ti_k1[k+1];
+            for (int i=0; i<=k; ++i)
+            {
+                Ti_k0[i] = 0;
+                Ti_k1[i] = -prices[0];
+            }
+            
+            for (int i=1; i<size; ++i)
+            {
+                for(int j=k; j>0; --j)
+                {
+                    Ti_k0[j] = max(Ti_k0[j], Ti_k1[j]+prices[i]);
+                    Ti_k1[j] = max(Ti_k1[j], Ti_k0[j-1]-prices[i]);
+                }
+            }
+            return Ti_k0[k];
+        }
+            
+    }
+};
