@@ -1,0 +1,14 @@
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int Ti_K0 = 0, Ti_K1 = -prices[0];
+        
+        for(int i=1; i<prices.size(); ++i)
+        {
+            int Ti_K0Old = Ti_K0;
+            Ti_K0 = max(Ti_K0, (Ti_K1+prices[i]));
+            Ti_K1 = max(Ti_K1, Ti_K0Old-prices[i]);
+        }
+        return Ti_K0;
+    }
+};
