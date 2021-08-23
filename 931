@@ -1,0 +1,33 @@
+class Solution {
+private:
+    int helper(vector<vector<int>>& matrix, int row, int col, vector<vector<int>>& dp)
+    {
+        if (row == matrix.size())
+            return 0;
+        else if (col<0 || col>=matrix[0].size())
+            return INT_MAX;
+        else if (row<0 || row>=matrix.size())
+            return INT_MAX;
+        else if (dp[row][col] != -1)
+            return dp[row][col];
+        int opt1 = helper(matrix, row+1, col-1, dp);
+        int opt2 = helper(matrix, row+1, col, dp);
+        int opt3 = helper(matrix, row+1, col+1, dp);
+        int opt = min({opt1, opt2, opt3});
+        
+        dp[row][col] = matrix[row][col]+opt;
+        return dp[row][col];
+    }
+public:
+    int minFallingPathSum(vector<vector<int>>& matrix) {
+        int m = matrix.size();
+        int n = matrix[0].size();
+        vector<vector<int>> dp(m, vector<int>(n, -1));
+        int ans = INT_MAX;
+        for (int i=0; i<n; ++i)
+        {
+            ans = min(ans, helper(matrix, 0, i, dp));
+        }
+        return ans;
+    }
+};
