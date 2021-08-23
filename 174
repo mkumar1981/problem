@@ -1,0 +1,30 @@
+class Solution {
+private:
+    int getMinHealth(vector<vector<int>>& dp, int currCell, int row, int col)
+    {
+        if (row>=dp.size() || col>= dp[0].size())
+            return INT_MAX;
+        int nextCell = dp[row][col];
+        return max(1, nextCell-currCell);
+    }
+public:
+    int calculateMinimumHP(vector<vector<int>>& dungeon) {
+        int rows = dungeon.size();
+        int cols = dungeon[0].size();
+        vector<vector<int>> dp(rows, vector<int>(cols, INT_MAX));
+        for(int i=rows-1; i>=0; --i)
+        {
+            for(int j=cols-1; j>=0; --j)
+            {
+                int currCell = dungeon[i][j];
+                int minRight = getMinHealth(dp, currCell, i, j+1);
+                int minDown = getMinHealth(dp, currCell, i+1, j);
+                int minHealth = min(minRight, minDown);
+                if (minHealth==INT_MAX)
+                    minHealth = (currCell>0)?1:1-currCell;
+                dp[i][j] = minHealth;
+            }
+        }
+        return dp[0][0];
+    }
+};
