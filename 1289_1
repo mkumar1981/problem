@@ -1,0 +1,44 @@
+class Solution {
+public:
+    int minFallingPathSum(vector<vector<int>>& grid) {
+        int n = grid.size();
+        if (n==1)
+            return grid[0][0];
+        
+        for (int i=1; i<n; ++i)
+        {
+            int minCol = -1, secondMinCol = -1;
+            
+            for (int col=0; col<n; ++col)
+            {
+                int cost = grid[i-1][col];
+                if (minCol==-1 || cost<grid[i-1][minCol])
+                {
+                    secondMinCol = minCol;
+                    minCol = col;
+                }
+                else if (secondMinCol==-1 || cost<grid[i-1][secondMinCol])
+                {
+                    secondMinCol = col;
+                }
+            }
+            for (int col=0; col<n; ++col)
+            {
+                if (col != minCol)
+                {
+                    grid[i][col] += grid[i-1][minCol];
+                }
+                else
+                {
+                    grid[i][col] += grid[i-1][secondMinCol];
+                }
+            }
+        }
+        int ans = INT_MAX;
+        for (int i=0; i<n; ++i)
+        {
+            ans = min(ans, grid[n-1][i]);
+        }
+        return ans;
+    }
+};
