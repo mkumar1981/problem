@@ -1,0 +1,23 @@
+class Solution {
+private:
+    long numRollsToTarget(int d, int f, int target, vector<vector<int>>& memo)
+    {
+        int mod = 1000000007;
+        if (d==0 || target<=0)
+            return d==target;
+        else if (memo[d][target]!=-1)
+            return memo[d][target];
+        long res = 0;
+        for(int i=1; i<=f; ++i)
+        {
+            res = (res+numRollsToTarget(d-1, f, target-i, memo))%mod;
+        }
+        memo[d][target] = res%mod;
+        return memo[d][target];
+    }
+public:
+    int numRollsToTarget(int d, int f, int target) {
+        vector<vector<int>> memo(d+1, vector<int>(target+1, -1));
+        return numRollsToTarget(d, f, target, memo);
+    }
+};
