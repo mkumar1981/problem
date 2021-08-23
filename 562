@@ -1,0 +1,52 @@
+class Solution {
+public:
+    int longestLine(vector<vector<int>>& mat) {
+        int m = mat.size();
+        int n = mat[0].size();
+        vector<int> pvertical(n, 0);
+        vector<int> pdiagonal(n, 0);
+        vector<int> pantidiagonal(n, 0);
+        vector<int> phorizontal(n, 0);
+        int max_horizontal = 0;
+        int ans = 0;
+        
+        for (int i=0; i<n; ++i)
+        {
+            if (mat[0][i])
+            {
+                pvertical[i] = 1;
+                phorizontal[i] = (i>0?phorizontal[i-1]+1:1);
+                pdiagonal[i] = 1;
+                pantidiagonal[i] = 1;
+                max_horizontal = max(max_horizontal, phorizontal[i]);
+                int ans1 = max({pvertical[i], pantidiagonal[i], pdiagonal[i]});
+                ans = max({ans, ans1, max_horizontal});
+            }
+        }
+        
+        for (int i=1; i<m; ++i)
+        {
+            vector<int> cvertical(n, 0);
+            vector<int> chorizontal(n, 0);
+            vector<int> cdiagonal(n, 0);
+            vector<int> cantidiagonal(n, 0);
+            for(int j=0; j<n; ++j)
+            {
+                if (mat[i][j])
+                {
+                    cvertical[j] = pvertical[j]+1;
+                    chorizontal[j] = (j>0 ? chorizontal[j-1]+1:1);
+                    cdiagonal[j] = (j>0 ? pdiagonal[j-1]+1:1);
+                    cantidiagonal[j] = (j<n-1 ? pantidiagonal[j+1]+1:1);
+                    max_horizontal = max(max_horizontal, chorizontal[j]);
+                    int ans1 = max({cvertical[j], cantidiagonal[j], cdiagonal[j]});
+                    ans = max({ans, ans1, max_horizontal});
+                }
+            }
+            pvertical = std::move(cvertical);
+            pdiagonal = std::move(cdiagonal);
+            pantidiagonal = std::move(cantidiagonal);
+        }
+        return ans;
+    }
+};
