@@ -1,0 +1,26 @@
+class Solution {
+public:
+    vector<int> partitionLabels(string s) {
+        int len = s.length(), previousPartitionIndex = -1, nextPartitionIndex = 0;
+        int indexMap[26] = {0};
+        vector<int> result;
+        
+        for (int i=0; i<s.length(); ++i)
+        {
+            indexMap[s[i]-'a'] = i;
+        }
+        for (int i=0; i<s.length(); ++i)
+        {
+            int index = s[i]-'a';
+            nextPartitionIndex = max(nextPartitionIndex, indexMap[index]);
+            if (nextPartitionIndex==i)
+            {
+                int len = nextPartitionIndex-previousPartitionIndex;
+                result.push_back(len);
+                previousPartitionIndex = nextPartitionIndex;
+                ++nextPartitionIndex;
+            }
+        }
+        return result;
+    }
+};
