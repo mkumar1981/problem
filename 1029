@@ -1,0 +1,19 @@
+class Solution {
+public:
+    int twoCitySchedCost(vector<vector<int>>& costs) {
+        int n = costs.size();
+        int total = 0;
+        vector<int> savings(n, 0);
+        for(int i=0; i<n; ++i)
+        {
+            savings[i] += (costs[i][0]-costs[i][1]);
+            total += costs[i][1];
+        }
+        sort(savings.begin(), savings.end());
+        for(int i=0; i<n/2; ++i)
+        {
+            total += savings[i];
+        }
+        return total;
+    }
+};
