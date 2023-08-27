@@ -1,0 +1,171 @@
+/*
+A currency pair is the quotation of two different currencies, with the value of
+one currency being quoted against the other. The first listed currency of a
+currency pair is called the base currency, and the second currency is called
+the quote currency.
+
+The quotation EUR/USD 1.2500 means that one euro is exchanged for 1.2500 US
+dollars.
+
+Problem I
+
+Given a list of quotations formatted as <base currency>/<quote currency> <rate>,
+write a function that computes the exchange rate from a base_currency to a
+quote_currency. Your function should minimize the number of intermediate
+conversions.
+
+def exchange_rate(quotations: list[str], base_currency: str, quote_currency:
+str) -> float:
+    """Your code here."""
+
+Example
+Suppose we are given quotations "USD/GBP 0.868", GBP/CHF 1.13, CHF/EUR 1.024,
+and EUR/GBP 0.864. Then the exchange rate between USD and CHF is 0.868 * 1.13 =
+0.98084.
+
+Problem II
+In this problem we make a few assumptions: 
+1. If currencyX / currencyY is tradable with exchange rate r, then currencyY / currencyX is also tradable with exchange rate 1/r.
+2. USD can be converted to any other currency either directly or indirectly.
+3. The quotations are consistent.
+
+How would you change your solution to Problem I if we need to query the exchange rate many times with various (base_currency, quote_currency) pairs?
+
+For simplicity, assume base_currency and quote_currency both exist in quotations.
+
+Problem III
+
+What if the quotations are received gradually? We still assume that a) the quotations are consistent, and b) if currencyX / currencyY is tradable with exchange rate r, then currencyY / currencyX is also tradable with exchange rate 1/r.
+
+class ExchangeRateDynamic:
+
+    def __init__(self):
+        """Your code here."""
+
+    def add_quotation(quotation: str) -> None:
+        """Your code here."""
+
+    def exchange_rate(base_currency: str, quote_currency: str) -> float:
+        """Your code here."""
+
+*/
+
+#include <iostream>
+#include <unordered_map>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class ExchangeRateDynamic {
+private:
+  class UnionFind {
+  private:
+    vector<int> size;
+    vector<pair<int, double>> parent;
+    unordered_map<string, int> currencyMap;
+    int counter;
+  public:
+    UnionFind(int n) {
+        counter = 0;
+        size.resize(n, 1);
+        parent.reserve(n);
+        for(int i=0; i<n; ++i) {
+          parent.push_back({i, 1.0});
+        }
+    }
+    int find(int x) {
+      while (parent[x].first != x) {
+        x = parent[x].first;
+      }
+      return x;
+    }
+    int pathCompression(int x) {
+      if (parent[x].first==x) return x;
+      parent[x].second *= parent[parent[x].first].second;
+      return parent[x].first = pathCompression(parent[x].first);
+    }
+    void Union(int x, int y, double val) {
+      int px = pathCompression(x);
+      int py = pathCompression(y);
+      if (px!=py) {
+        if (size[px]<=size[py]) {
+          size[py] += size[px];
+          parent[px].first = py;
+          parent[px].second *= (val*parent[y].second);
+        }
+        else {
+          size[px] += size[py];
+          parent[py].first = px;
+          parent[py].second *= ((1/val)*parent[x].second);
+        }
+      }
+    }
+    double getValue(int x, int y) {
+      double val1=1.0;
+      while (parent[x].first != x) {
+        val1 *= parent[x].second;
+        x = parent[x].first;
+      }
+      double val2 = 1.0;
+      while (parent[y].first != y) {
+        val2 *= parent[y].second;
+        y = parent[y].first;
+      }
+      return val1 * 1/val2;
+    }
+    void addEdge(const std::string& src, const std::string& dest, double val) {
+      if (currencyMap.count(src)==0) {
+          currencyMap[src] = ++counter;
+      }
+      if (currencyMap.count(dest)==0) {
+          currencyMap[dest] = ++counter;
+      }
+      Union(currencyMap[src], currencyMap[dest], val);
+    }
+    double query(const std::string& src, const std::string& dest) {
+      if (currencyMap.count(src)==0 || currencyMap.count(dest)==0) {
+          return -1.0;
+      }
+      return getValue(currencyMap[src], currencyMap[dest]);
+    }
+  };
+  UnionFind* uf;
+public:
+  ExchangeRateDynamic() {
+      uf = new UnionFind(1000);
+  }
+  
+  double exchange_rate(const std::string& src, const std::string& dest) {
+      return uf->query(src, dest);
+  }
+  void add_quotation(const std::string& str) {
+    int pos = str.find(' ');
+    if (pos != std::string::npos) {
+        double val = stod(str.substr(pos+1));
+        string rem = str.substr(0, pos);
+        pos = rem.find('/');
+        if (pos != std::string::npos) {
+            string src = rem.substr(0, pos);
+            string dest = rem.substr(pos+1);
+            uf->addEdge(src, dest, val);
+        }
+    }
+}
+
+};
+
+
+
+int main()
+{
+    ExchangeRateDynamic inst;
+    inst.add_quotation("USD/GBP 0.868");
+    inst.add_quotation("GBP/CHF 1.13");
+    cout<<inst.exchange_rate("USD", "CHF")<<endl;
+    inst.add_quotation("CHF/EUR 1.024");
+    cout<<inst.exchange_rate("USD", "EUR")<<endl;
+    inst.add_quotation("EUR/GBP 0.864");
+
+    return 0;
+}
